@@ -1,6 +1,9 @@
 import numpy as np
-import os,glob,cv2
-import sys,argparse
+import os
+import glob
+import cv2
+import sys
+import argparse
 import math
 import matplotlib.pyplot as plt
 from rdp import rdp
@@ -341,10 +344,12 @@ def distance(point_one, point_two):
     diff_y = (point_one[1] - point_two[1]) ** 2
     return math.pow(diff_x + diff_y, 0.5)
 
+
 for group in connected_groups:
     print('number in group = ', len(group))
     points_original = dg_simplification(group)
-    # choose a start point then find the cloest point, then find the cloest point AFTER that point (d_next > d_prev) and so on
+    # choose a start point then find the cloest point,
+    # then find the cloest point AFTER that point (d_next > d_prev) and so on
     # if such a point does not exist then go back
 
     # order points wrt to distance from the first point in the list
@@ -357,7 +362,9 @@ for group in connected_groups:
     done = False
     # while not done:
     #     points.sort(key=lambda x: distance(current_point, x))
-    #     possible_new_points = list(filter(lambda x: distance(prev_point, x ) > distance(prev_point, current_point), points))
+    #     possible_new_points =
+    #     list(filter(lambda x: distance(prev_point, x )
+    #     > distance(prev_point, current_point), points))
     #     possible_new_points.sort(key=lambda x: distance(current_point, x))
     #     if len(possible_new_points) > 0:
     #         next_point = possible_new_points[0]
@@ -365,7 +372,7 @@ for group in connected_groups:
     #         prev_point = current_point
     #         current_point = next_point
     #     else:
-    #         # start a new path, go back and find an unvisited point that is greater than the desired tolerance away from another point (in any direction)
+    #         # start a new path, go back
     #         done = True
 
     # x = []
@@ -381,45 +388,24 @@ for group in connected_groups:
     for point in points_original:
         x.append(point[0])
         y.append(point[1])
-    plt.scatter(y, x, s = 1)
-
+    plt.scatter(y, x, s=1)
 
 plt.axes().set_aspect('equal')
 plt.savefig('mcmc.pdf')
 
-print('reduced number of links = ', len(short_links) )
-
-
-# find ways to remove links without loosing the structure or connectivity
-# divide grid up into pixels, assign each link a pixel to pixel (already have this in effect)
-# remove any links that join the same two pixels
-# so a link should get an id which is a unique representation for that link, then we can deduplicate the list
-# this id must be the same for either direction, so we have to define a standard
-
+print('reduced number of links = ', len(short_links))
 
 for link in short_links:
     p1 = link.point_one
     p2 = link.point_two
-    plt.plot([p2[1],p1[1]], [p2[0],p1[0]])
+    plt.plot([p2[1], p1[1]], [p2[0], p1[0]])
 plt.axes().set_aspect('equal')
 plt.savefig('mcmc.pdf')
-
-# from a node move along all connections untill converging on same point again, then remove duplicate connections
-# best to create a graph structure, where each point in a node with associated links
-
-# find all connect nodes then create a new set of nodes with the shortest distance between them all
-
-
-
-
-
-
 
 maximum_value = np.max(mcmc)
 print('mean visits is ', np.mean(mcmc))
 print('most visited pixel has vists = ', maximum_value)
 mcmc = (abs(mcmc - maximum_value) / maximum_value) * 255
-
 
 print('number of steps taken = ', len(params))
 cv2.imwrite('smoothed.jpg', mcmc)

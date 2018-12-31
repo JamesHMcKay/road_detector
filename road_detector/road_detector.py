@@ -1,9 +1,19 @@
 import tensorflow as tf
 import numpy as np
-import os,glob,cv2
-import sys,argparse
+import os
+import glob
+import cv2
+import sys
+import argparse
 import create_training_set
+import train
 
 print('Starting road detector')
 
-create_training_set.test()
+if (len(sys.argv) == 3):
+    if (sys.argv[1] == "train"):
+        train.train_model(sys.argv[2])
+    elif (sys.argv[1] == "test"):
+        create_training_set.test()
+else:
+    print('Please provide a command and a path')

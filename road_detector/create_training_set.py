@@ -1,7 +1,10 @@
 import tensorflow as tf
 import numpy as np
-import os,glob,cv2
-import sys,argparse
+import os
+import glob
+import cv2
+import sys
+import argparse
 import create_training_set
 from sklearn.utils import shuffle
 import imutils
@@ -52,8 +55,8 @@ class DataSet(object):
 
     return self._images[start:end], self._labels[start:end]
 
-def process_images(image_size):
-    image_path = '../RoadDetection_Train_Images/'
+def process_images(image_size, file_path = '../RoadDetection_Train_Images/'):
+    image_path = file_path
     class DataSets(object):
         pass
     data_sets = DataSets()

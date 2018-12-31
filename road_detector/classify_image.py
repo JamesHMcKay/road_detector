@@ -1,30 +1,30 @@
 import tensorflow as tf
 import numpy as np
-import os,glob,cv2
+import os
+import glob
+import cv2
 import sys,argparse
 import create_training_set
 from sklearn.utils import shuffle
 import create_training_set
 import itertools
 
+
 def classify_image(filename):
     # divide image up into regions and classify each region
     image_size = 100
     img = create_training_set.read_image(filename, image_size)
-    print('shape = ', img.shape)
     result = np.empty([img.shape[0], img.shape[1]])
     verticalDivisor = 12
     horizontalDivisor = 8
-    
+
     height, width, channels = img.shape
     h = (height / verticalDivisor)
-    w = (width / horizontalDivisor )
-    quarter_range = int(round(0.25 * h));
-    quarter_rangex = int(round(0.25 * w));
-    images = [];
-
-    number_of_steps = 5;
-
+    w = (width / horizontalDivisor)
+    quarter_range = int(round(0.25 * h))
+    quarter_rangex = int(round(0.25 * w))
+    images = []
+    number_of_steps = 5
     pixels_per_step_h = int(round(h / number_of_steps))
     pixels_per_step_w = int(round(w / number_of_steps))
     pps_h_2 = int(round(0.5 * pixels_per_step_h))
@@ -70,7 +70,6 @@ def classify_image(filename):
                         middle_x = int(round(0.5*(upper_x + lower_x)))
                         result[middle_y - pps_w_2:middle_y + pps_w_2,
                             middle_x-pps_h_2:middle_x + pps_h_2] = like_road*255
-
     cv2.imwrite("result.jpg", result)
 
 
@@ -85,7 +84,7 @@ def predict(images):
     ## Let us restore the saved model 
     sess = tf.Session()
     # Step-1: Recreate the network graph. At this step only graph is created.
-    saver = tf.train.import_meta_graph('dogs-cats-model.meta')
+    saver = tf.train.import_meta_graph('trained-model.meta')
     # Step-2: Now let's load the weights saved using the restore method.
     saver.restore(sess, tf.train.latest_checkpoint('./'))
 
@@ -99,7 +98,7 @@ def predict(images):
     ## Let's feed the images to the input placeholders
     x= graph.get_tensor_by_name("x:0") 
     y_true = graph.get_tensor_by_name("y_true:0") 
-    y_test_images = np.zeros((1, len(os.listdir('training_data')))) 
+    y_empty = np.zeros((1, 2))) 
 
     max_match_size = 1000
     results = np.empty([1,2])
@@ -110,8 +109,8 @@ def predict(images):
         while (upper_index < len(images)):
             subset = images[lower_index:upper_index]
             x_batch = subset.reshape(subset.shape[0], image_size,image_size,num_channels)
-            feed_dict_testing = {x: x_batch, y_true: y_test_images}
-            result=sess.run(y_pred, feed_dict=feed_dict_testing)
+            input_dict = {x: x_batch, y_true: y_empty}
+            result=sess.run(y_pred, feed_dict=input_dict)
             results = np.vstack((results, result))
             print('shape of results = ', results.shape)
             lower_index = lower_index + max_match_size
@@ -119,13 +118,13 @@ def predict(images):
             print(upper_index)
         subset = images[lower_index:upper_index]
         x_batch = subset.reshape(subset.shape[0], image_size,image_size,num_channels)
-        feed_dict_testing = {x: x_batch, y_true: y_test_images}
-        result=sess.run(y_pred, feed_dict=feed_dict_testing)
+        input_dict = {x: x_batch, y_true: y_empty}
+        result=sess.run(y_pred, feed_dict=input_dict)
         results = np.vstack((results, result))
     else:
         x_batch = images.reshape(images.shape[0], image_size,image_size,num_channels)
-        feed_dict_testing = {x: x_batch, y_true: y_test_images}
-        results=sess.run(y_pred, feed_dict=feed_dict_testing)
+        input_dict = {x: x_batch, y_true: y_test_images}
+        results=sess.run(y_pred, feed_dict=input_dict)
     return results
 
 classify_image(sys.argv[1])
