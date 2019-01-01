@@ -8,6 +8,7 @@ import math
 import matplotlib.pyplot as plt
 from rdp import rdp
 
+
 # compute the probability that this patch is a road of normal width
 # we will take the road to be 3 pixels across
 # so this will compute for an effective circle of radius 3/2
@@ -53,8 +54,9 @@ class Link(object):
         x = str(x1) + "x" + str(x2) if x1 > x2 else str(x2) + "x" + str(x1)
         y1 = int(self._point_two[0])
         y2 = int(self._point_two[1])
-        y = str(y1) + "y" +str(y2) if y1 > y2 else str(y2) + "y" + str(y1)
+        y = str(y1) + "y" + str(y2) if y1 > y2 else str(y2) + "y" + str(y1)
         return y + x
+
 
 class Vertex(object):
     def __init__(self, origin):
@@ -84,12 +86,12 @@ class Vertex(object):
             self._adjacent_points.append(point_id)
 
 
-def prob_road(image, x ,y):
+def prob_road(image, x, y):
     image = image / 255.0
     max_x = x + 1
     max_y = y + 1
     min_x = x - 1
-    min_y = y -1
+    min_y = y - 1
     if x + 1 >= image.shape[0]:
         max_x = image.shape[0] - 1
     if y + 1 >= image.shape[1]:
@@ -100,23 +102,27 @@ def prob_road(image, x ,y):
         min_y = 0
     prob = 0.11111111 * (
         2.0 * image[x, y] +
-        (7.0/8.0) * (image[max_x, max_y] +
-        image[max_x, min_y] +
-        image[max_x, y] +
-        image[x , max_y] +
-        image[min_x, min_y] +
-        image[min_x, max_y] +
-        image[min_x, y] +
-        image[x , min_y]))
-    # prob = prob if prob > 0.5 else 0
+        (7.0/8.0) * (
+            image[max_x, max_y] +
+            image[max_x, min_y] +
+            image[max_x, y] +
+            image[x, max_y] +
+            image[min_x, min_y] +
+            image[min_x, max_y] +
+            image[min_x, y] +
+            image[x, min_y]))
     return (1 - prob)
 
 
 def compute_orthogonal_distance(upper, lower, point):
     upper = np.array(upper)
     lower = np.array(lower)
-    magnitude_a = pow( (upper[0] - lower[0]) ** 2 + (upper[1] - lower[1]) ** 2, 0.5)
-    magnitude_b = pow( (point[0] - lower[0]) ** 2 + (point[1] - lower[1]) ** 2, 0.5)
+    magnitude_a = pow(
+        (upper[0] - lower[0]) ** 2 +
+        (upper[1] - lower[1]) ** 2, 0.5)
+    magnitude_b = pow(
+        (point[0] - lower[0]) ** 2 +
+        (point[1] - lower[1]) ** 2, 0.5)
     a = upper - lower
     b = point - lower
     a_dot_b = a[0] * b[0] + a[1] * b[1]
@@ -127,7 +133,6 @@ def compute_orthogonal_distance(upper, lower, point):
     return dist
 
 
-
 def dg_simplification(connected_group):
     global vertices
 
@@ -136,35 +141,14 @@ def dg_simplification(connected_group):
         vertex = vertices[vertex_id]
         arr.append([vertex.x, vertex.y])
     arr = np.array(arr)
-    mask = rdp(arr, epsilon = 8, algo="iter", return_mask=True)
+    mask = rdp(arr, epsilon=10, algo="iter", return_mask=True)
     return arr[mask]
 
 
-    # connected_group.sort(key=lambda z: vertices[z].x)
-    # min_x = vertices[connected_group[0]]
-    # max_x = vertices[connected_group[len(connected_group) - 1]]
-    # print('min x ', vertices[connected_group[0]].x)
-    # print('max x ', vertices[connected_group[len(connected_group) - 1]].x)
-    # distances = []
-    # for vertex_id in connected_group:
-    #     vertex = vertices[vertex_id]
-    #     distance = compute_orthogonal_distance(
-    #         [min_x.x, min_x.y], [max_x.x, max_x.y], [vertex.x, vertex.y])
-    #     distances.append(distance)
-
-    # distances.sort(key=lambda x: x)
-    # print(distances)
-
-    # # find the point furthest away from the line from min_x to max_x
-
-
-
-
-image = cv2.imread(sys.argv[1],0)
-
+image = cv2.imread(sys.argv[1], 0)
 
 original_size = image.shape
-image = cv2.resize(image, (5 * 8, 5 * 12),0,0, cv2.INTER_NEAREST)
+image = cv2.resize(image, (5 * 8, 5 * 12), 0, 0, cv2.INTER_NEAREST)
 print(image.shape)
 min_value = np.min(image)
 max_value = np.max(image)
@@ -176,34 +160,10 @@ image = image[2:image.shape[0] - 3, 2:image.shape[1] - 3]
 
 cv2.imwrite('cut.jpg', image)
 
-# for x in range(image.shape[0] - 1):
-#     for y in range(image.shape[1] - 1):
-#         if (image[x, y] == max_value):
-#             image[x, y] = max_value*255
-
-
-# for x in range(image.shape[0] - 1):
-#     for y in range(image.shape[1] - 1):
-#         if (image[x, y] == min_value
-#             and (upper_nearest_neighbours_min(image, x, y) != min_value
-#             or lower_nearest_neighbours_min(image, x, y) != min_value)
-#         ):
-#             image[x, y] = max_value
-
-# image_smoothed = np.empty(image.shape)
-# for x in range(image.shape[0] - 1):
-#     for y in range(image.shape[1] - 1):
-#             image_smoothed[x, y] = prob_road(image, x, y)
-
-# image_smoothed = cv2.resize(image_smoothed, (original_size[1],original_size[0]),0,0, cv2.INTER_NEAREST)
-# # denoised = cv2.blur(image,(20,20),0)
-# cv2.imwrite('smoothed.jpg', image_smoothed)
-
-
 # perform random walk through parameter space
 num_iterations = 50000
 params = []
-params.append([0,20])
+params.append([0, 20])
 
 current_prob = prob_road(image, params[0][0], params[0][1])
 tolerance = 0.2
@@ -211,8 +171,8 @@ tolerance = 0.2
 x_limit = image.shape[0]
 y_limit = image.shape[1]
 mcmc = np.zeros(image.shape)
-mean_step_size = 10
-tolerance_bad_step = 0.3
+mean_step_size = 5
+tolerance_bad_step = 0.0
 tolerance_prob = 0.3
 
 xplot = []
@@ -232,8 +192,12 @@ for n in range(num_iterations):
         mean_step_size = 5
         tolerance_bad_step = 0.0
         tolerance_prob = 0.3
-    
-    isInRange = x_new < x_limit - 1 and y_new < y_limit - 1 and y_new > 0 and x_new > 0
+
+    isInRange = (
+        x_new < x_limit - 1
+        and y_new < y_limit - 1
+        and y_new > 0
+        and x_new > 0)
     take_bad_step = np.random.uniform(0, 1) > 1.0 - tolerance_bad_step
     allow_tolerance_prob = np.random.uniform(0, 1) > 0.5
     allow = 1 if allow_tolerance_prob else 0
@@ -266,15 +230,15 @@ for i in range(0, number_of_points - 2, 2):
     total_length += new_link.get_length()
     links.append(new_link)
 
-number_of_links = len(links);
-print('number of links = ', number_of_links )
-mean_link_length = total_length / number_of_links;
+number_of_links = len(links)
+print('number of links = ', number_of_links)
+mean_link_length = total_length / number_of_links
 print('mean link length = ', mean_link_length)
 
 links.sort(key=lambda x: x.get_length())
 
-cutoff_length = links[int(round(0.9 * number_of_links))].get_length()
-lower_cutoff_length = 2
+cutoff_length = links[int(round(0.99 * number_of_links))].get_length()
+lower_cutoff_length = 1
 print('cutoff length = ', cutoff_length)
 
 short_links = []
@@ -282,7 +246,9 @@ vertices = {}
 ids = []
 for link in links:
     link_id = link.get_id()
-    if (link.get_length() < cutoff_length and link_id not in ids and link.get_length() > lower_cutoff_length):
+    if (link.get_length() < cutoff_length
+            and link_id not in ids
+            and link.get_length() > lower_cutoff_length):
         short_links.append(link)
         ids.append(link_id)
         vertex_one = Vertex(link.point_one)
@@ -300,13 +266,17 @@ for link in links:
 
 print('number of vertices = ', len(vertices))
 
+
 def visit_next_vertex(vertex, connected_list):
     global vertices
     for next_point in vertices[vertex].adjancent_points:
         if next_point not in connected_list:
             connected_list.append(next_point)
-            connected_list = visit_next_vertex(vertices[next_point].id, connected_list)
+            connected_list = visit_next_vertex(
+                vertices[next_point].id,
+                connected_list)
     return connected_list
+
 
 vertex_count = 0
 # for vertex in vertices:
@@ -332,8 +302,6 @@ while (total_connected_points < len(keys)):
 
 connected_groups.sort(key=lambda x: len(x))
 
-# now we have the connected groups work through and remove points without breaking connectivity
-
 # work on the first connected group
 connected_group = connected_groups[len(connected_groups) - 1]
 print('size of group = ', len(connected_group))
@@ -351,7 +319,6 @@ for group in connected_groups:
     # choose a start point then find the cloest point,
     # then find the cloest point AFTER that point (d_next > d_prev) and so on
     # if such a point does not exist then go back
-
     # order points wrt to distance from the first point in the list
     points = list(points_original)
     prev_point = points[0]
@@ -360,28 +327,34 @@ for group in connected_groups:
     next_point = points[1]
     current_point = next_point
     done = False
-    # while not done:
-    #     points.sort(key=lambda x: distance(current_point, x))
-    #     possible_new_points =
-    #     list(filter(lambda x: distance(prev_point, x )
-    #     > distance(prev_point, current_point), points))
-    #     possible_new_points.sort(key=lambda x: distance(current_point, x))
-    #     if len(possible_new_points) > 0:
-    #         next_point = possible_new_points[0]
-    #         path_one.append(next_point)
-    #         prev_point = current_point
-    #         current_point = next_point
-    #     else:
-    #         # start a new path, go back
-    #         done = True
-
-    # x = []
-    # y = []
-    # print('length of connected path = ', len(path_one))
-    # for point in path_one:
-    #     x.append(point[0])
-    #     y.append(point[1])
-    # plt.plot(y, x)
+    path_length = 0
+    possible_new_points = points
+    while not done:
+        limit = distance(prev_point, current_point)
+        possible_new_points = list(filter(
+            lambda x: distance(prev_point, x) > limit,
+            possible_new_points))
+        possible_new_points.sort(key=lambda x: distance(current_point, x))
+        if len(possible_new_points) > 1:
+            print(
+                'length ', path_length,
+                ' number of possible points = ',
+                len(possible_new_points))
+            next_point = possible_new_points.pop(0)
+            path_length = path_length + distance(current_point, next_point)
+            path_one.append(next_point)
+            prev_point = current_point
+            current_point = next_point
+        else:
+            # start a new path, go back
+            done = True
+    x = []
+    y = []
+    print('length of connected path = ', len(path_one))
+    for point in path_one:
+        x.append(point[0])
+        y.append(point[1])
+    plt.plot(y, x)
 
     x = []
     y = []
@@ -395,12 +368,12 @@ plt.savefig('mcmc.pdf')
 
 print('reduced number of links = ', len(short_links))
 
-for link in short_links:
-    p1 = link.point_one
-    p2 = link.point_two
-    plt.plot([p2[1], p1[1]], [p2[0], p1[0]])
-plt.axes().set_aspect('equal')
-plt.savefig('mcmc.pdf')
+# # for link in short_links:
+# #     p1 = link.point_one
+# #     p2 = link.point_two
+# #     plt.plot([p2[1], p1[1]], [p2[0], p1[0]])
+# plt.axes().set_aspect('equal')
+# plt.savefig('mcmc.pdf')
 
 maximum_value = np.max(mcmc)
 print('mean visits is ', np.mean(mcmc))

@@ -6,6 +6,7 @@ import math
 import random
 import numpy as np
 import os
+import yaml
 
 total_iterations = 0
 
@@ -31,7 +32,7 @@ def train(num_iteration):
             epoch = int(i / int(data.train.num_examples/batch_size))
 
             show_progress(epoch, feed_dict_tr, feed_dict_val, val_loss)
-            saver.save(session, './trained-model')
+            saver.save(session, './model/trained-model')
     total_iterations += num_iteration
 
 
@@ -122,6 +123,7 @@ def create_fc_layer(
 
 
 def train_model(file_path):
+    config = yaml.safe_load(open("config.yaml"))
     from numpy.random import seed
     seed(1)
     from tensorflow import set_random_seed
@@ -129,12 +131,13 @@ def train_model(file_path):
     global batch_size
     global num_classes
     global img_size
-    global num_channels
-    batch_size = 32
+
     # Prepare input data
-    num_classes = 2
-    img_size = 100
+    num_classes = config['training_parameters']['number_of_classes']
+    img_size = config['image_processing']['training_image_size']
     num_channels = 3
+    global num_channels
+    batch_size = config['training_parameters']['batch_size']
     global data
     # We shall load all the training and validation images and labels
     # into memory using openCV and use that during training
@@ -214,7 +217,7 @@ def train_model(file_path):
     global cost
     cost = tf.reduce_mean(cross_entropy)
     global optimizer
-    optimizer = tf.train.AdamOptimizer(learning_rate=1e-4).minimize(cost)
+    optimizer = tf.train.AdamOptimizer(learning_rate=1e-3).minimize(cost)
     correct_prediction = tf.equal(y_pred_cls, y_true_cls)
     global accuracy
     accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
@@ -223,4 +226,4 @@ def train_model(file_path):
     global saver
     saver = tf.train.Saver()
 
-    train(num_iteration=6000)
+    train(num_iteration=10000)

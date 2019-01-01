@@ -3,3 +3,4 @@ rdp
 numpy
 pytest
 tensorflow
+pyyaml

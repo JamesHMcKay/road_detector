@@ -7,6 +7,7 @@ import sys
 import argparse
 import create_training_set
 import train
+import yaml
 
 print('Starting road detector')
 
