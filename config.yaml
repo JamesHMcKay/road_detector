@@ -8,3 +8,6 @@ image_processing:
 training_parameters:
   batch_size: 32
   number_of_classes: 2
+
+image_classification:
+  number_of_translations: 4

@@ -82,8 +82,16 @@ def process_images(image_size, file_path='../RoadDetection_Train_Images/'):
         print('reading image ', filename)
         annotated_filename = image_path + filename + ".tif"
         original_filename = image_path + filename + ".jpg"
-        image = read_image(original_filename, image_size)
-        roads = read_image(annotated_filename, image_size)
+        image = read_image(
+            original_filename,
+            image_size,
+            horizontalDivisor,
+            verticalDivisor)
+        roads = read_image(
+            annotated_filename,
+            image_size,
+            horizontalDivisor,
+            verticalDivisor)
         # get array of each type from subdivide
         sub_images, sub_lables, sub_roads = subdivide(
             image,
@@ -136,7 +144,7 @@ def process_images(image_size, file_path='../RoadDetection_Train_Images/'):
     #         cv2.imwrite('others/other_' + str(index) + '.jpg', images[index])
     #         cv2.imwrite('others/other_' + str(index) + '_true.jpg', road_images[index])
 
-    # for index in range(images.shape[0] - 1):
+    # for index in range(images.shape[0]):
     #     images[index] = create_training_set.convert_image(images[index])
 
     # 20% of the data will automatically be used for validation
@@ -176,7 +184,7 @@ def subdivide(img, img_roads, horizontalDivisor, verticalDivisor):
     uy = int(round(0.6 * w))
     images_roads = []
     for index in range(len(sub_images) - 1):
-        subimage = sub_images[index]
+        subimage = create_training_set.convert_image(sub_images[index])
         subimage_roads = sub_images_roads[index]
         if (int(np.min(subimage_roads[lx:ux, ly:uy]))) == 0:
             images.append(subimage)
@@ -203,10 +211,10 @@ def convert_image(image):
     image = np.multiply(image, 1.0 / 255.0)
     return image
 
-def read_image(filename, image_size):
+def read_image(filename, image_size, horizontalDivisor, verticalDivisor):
     image = cv2.imread(filename)
     # resize here such that the processing is faster, rather than down
-    # size it later
+    # size it
     h = image_size * horizontalDivisor
     v = image_size * verticalDivisor
     image = cv2.resize(image, (h, v), 0, 0, cv2.INTER_LINEAR)

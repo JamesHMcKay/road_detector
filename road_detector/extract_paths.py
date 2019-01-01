@@ -354,26 +354,26 @@ for group in connected_groups:
     for point in path_one:
         x.append(point[0])
         y.append(point[1])
-    plt.plot(y, x)
+    # plt.plot(y, x)
 
     x = []
     y = []
     for point in points_original:
         x.append(point[0])
         y.append(point[1])
-    plt.scatter(y, x, s=1)
+#     plt.scatter(y, x, s=1)
 
-plt.axes().set_aspect('equal')
-plt.savefig('mcmc.pdf')
+# plt.axes().set_aspect('equal')
+# plt.savefig('mcmc.pdf')
 
 print('reduced number of links = ', len(short_links))
 
-# # for link in short_links:
-# #     p1 = link.point_one
-# #     p2 = link.point_two
-# #     plt.plot([p2[1], p1[1]], [p2[0], p1[0]])
-# plt.axes().set_aspect('equal')
-# plt.savefig('mcmc.pdf')
+for link in short_links:
+    p1 = link.point_one
+    p2 = link.point_two
+    plt.plot([p2[1], p1[1]], [p2[0], p1[0]],'black')
+plt.axes().set_aspect('equal')
+plt.savefig('mcmc.pdf')
 
 maximum_value = np.max(mcmc)
 print('mean visits is ', np.mean(mcmc))

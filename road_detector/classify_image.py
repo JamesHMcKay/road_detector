@@ -10,34 +10,44 @@ from sklearn.utils import shuffle
 import create_training_set
 import itertools
 import image_splitter
+import yaml
 
 
 def classify_image(filename):
     # divide image up into regions and classify each region
-    image_size = 100
-    img = create_training_set.read_image(filename, image_size)
+
+    config = yaml.safe_load(open("config.yaml"))
+    horizontalDivisor = config['image_processing']['horizontal_divisions']
+    verticalDivisor = config['image_processing']['vertical_divisions']
+    image_size = config['image_processing']['training_image_size']
+    number_of_steps = config['image_classification']['number_of_translations']
+    img = create_training_set.read_image(
+        filename,
+        image_size,
+        horizontalDivisor,
+        verticalDivisor)
+    img = create_training_set.convert_image(img)
     result = np.empty([img.shape[0], img.shape[1]])
-    verticalDivisor = 12
-    horizontalDivisor = 8
     images = image_splitter.get_sub_images(
         img,
         verticalDivisor,
-        horizontalDivisor)
+        horizontalDivisor,
+        number_of_steps)
 
-    values = predict(images)
+    values = predict(images, image_size)
 
     result = image_splitter.assign_to_subimages(
         values,
         result,
         verticalDivisor,
-        horizontalDivisor)
+        horizontalDivisor,
+        number_of_steps)
     cv2.imwrite("result.jpg", result)
 
 
-def predict(images):
+def predict(images, image_size):
     # image = create_training_set.convert_image(image)
     # images = []
-    image_size = 100
     num_channels = 3
     images = np.array(images)
     sess = tf.Session()
