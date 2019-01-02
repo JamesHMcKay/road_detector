@@ -1,9 +1,9 @@
 image_processing:
-  training_image_size: 128
+  training_image_size: 100
   vertical_divisions: 12
   horizontal_divisions: 8
   number_of_translations: 2
-  border_tolerance: 0.2
+  border_tolerance: 0.3
 
 training_parameters:
   batch_size: 32

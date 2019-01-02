@@ -27,7 +27,8 @@ def classify_image(filename):
         horizontalDivisor,
         verticalDivisor)
     img = create_training_set.convert_image(img)
-    result = np.empty([img.shape[0], img.shape[1]])
+    result = np.ones([img.shape[0], img.shape[1]])
+    result = result * 255
     images = image_splitter.get_sub_images(
         img,
         verticalDivisor,
@@ -43,6 +44,7 @@ def classify_image(filename):
         horizontalDivisor,
         number_of_steps)
     cv2.imwrite("result.jpg", result)
+    return result
 
 
 def predict(images, image_size):
@@ -100,4 +102,4 @@ def predict(images, image_size):
     return results
 
 
-classify_image(sys.argv[1])
+#classify_image(sys.argv[1])

@@ -191,12 +191,6 @@ def subdivide(img, img_roads, horizontalDivisor, verticalDivisor):
             labels.append([0, 1.0])
             images.append(imutils.rotate(subimage, 90))
             labels.append([0, 1.0])
-            images.append(imutils.rotate(subimage, 180))
-            labels.append([0, 1.0])
-            images.append(imutils.rotate(subimage, 270))
-            labels.append([0, 1.0])
-            images_roads.append(subimage_roads * 255)
-            images_roads.append(subimage_roads * 255)
             images_roads.append(subimage_roads * 255)
             images_roads.append(subimage_roads * 255)
         if (np.min(subimage_roads)) > 0:
