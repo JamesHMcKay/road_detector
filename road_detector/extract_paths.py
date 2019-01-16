@@ -8,6 +8,7 @@ import math
 import matplotlib.pyplot as plt
 import yaml
 
+
 class Link(object):
     def __init__(self, p1, p2):
         self._point_one = p1
@@ -92,17 +93,18 @@ def prob_road(image, x, y):
     if y - 1 < 0:
         min_y = 0
     prob = 0.11111111 * (
-        4.0 * image[x, y] +
-        (5.0/8.0) * (
-            image[max_x, max_y] +
-            image[max_x, min_y] +
-            image[max_x, y] +
-            image[x, max_y] +
-            image[min_x, min_y] +
-            image[min_x, max_y] +
-            image[min_x, y] +
-            image[x, min_y]))
+        4.0 * image[x, y]
+        + (5.0 / 8.0) * (
+            image[max_x, max_y]
+            + image[max_x, min_y]
+            + image[max_x, y]
+            + image[x, max_y]
+            + image[min_x, min_y]
+            + image[min_x, max_y]
+            + image[min_x, y]
+            + image[x, min_y]))
     return (1 - prob)
+
 
 def random_walk(image, initial_point):
     config = yaml.safe_load(open("config.yaml"))
@@ -146,14 +148,16 @@ def random_walk(image, initial_point):
             if ((prob > current_prob - tolerance_prob or take_bad_step)):
                 params.append([x_new, y_new])
                 count += 1
-                if (
+                save = (
                     n > burn_in_length
                     and not take_bad_step
-                    and current_prob > 0.4):
+                    and current_prob > 0.4)
+                if (save):
                     xplot.append(-1.0 * x_new)
                     yplot.append(y_new)
                 current_prob = prob
     return xplot, yplot
+
 
 def extract_paths(input_image):
     image = input_image
@@ -177,7 +181,7 @@ def extract_paths(input_image):
     xplot = []
     yplot = []
 
-    xplot_sub, yplot_sub = random_walk(image, [20,20])
+    xplot_sub, yplot_sub = random_walk(image, [20, 20])
     xplot = xplot + xplot_sub
     yplot = yplot + yplot_sub
     xplot_sub, yplot_sub = random_walk(

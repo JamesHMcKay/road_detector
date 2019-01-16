@@ -6,3 +6,5 @@ install:
   - pip install -r requirements.txt
 script:
   - pip install .
+  - python tests/style_test.py
+  - python tests/extract_paths_tests.py

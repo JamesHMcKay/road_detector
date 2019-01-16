@@ -1,5 +1,6 @@
 import create_training_set
 
+
 def get_sub_images(
         image,
         verticalDivisor,
@@ -65,6 +66,5 @@ def assign_to_subimages(
                 index += 1
                 result[
                     middle_y - pps_w_2:middle_y + pps_w_2,
-                    middle_x-pps_h_2:middle_x + pps_h_2
-                    ] = like_road * 255
+                    middle_x - pps_h_2:middle_x + pps_h_2] = like_road * 255
     return result

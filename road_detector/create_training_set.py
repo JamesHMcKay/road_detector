@@ -12,6 +12,7 @@ import re
 import image_splitter
 import yaml
 
+
 class DataSet(object):
     def __init__(self, images, labels):
         self._num_examples = images.shape[0]
@@ -106,7 +107,7 @@ def process_images(file_path='../RoadDetection_Train_Images/'):
     number_of_others = int(len(labels) - number_of_roads)
     print 'Number of others in training set = ' + str(number_of_others)
     images, labels, road_images = shuffle(images, labels, road_images)
-    
+
     validation_size = 0.2
     validation_size = int(validation_size * images.shape[0])
     validation_images = images[:validation_size]
@@ -163,6 +164,7 @@ def convert_image(image):
     image = image.astype(np.float32)
     image = np.multiply(image, 1.0 / 255.0)
     return image
+
 
 def read_image(filename, image_size, horizontalDivisor, verticalDivisor):
     image = cv2.imread(filename)
