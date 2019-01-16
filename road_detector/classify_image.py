@@ -48,8 +48,6 @@ def classify_image(filename):
 
 
 def predict(images, image_size):
-    # image = create_training_set.convert_image(image)
-    # images = []
     num_channels = 3
     images = np.array(images)
     sess = tf.Session()
@@ -78,10 +76,8 @@ def predict(images, image_size):
             input_dict = {x: x_batch, y_true: y_empty}
             result = sess.run(y_pred, feed_dict=input_dict)
             results = np.vstack((results, result))
-            print('shape of results = ', results.shape)
             lower_index = lower_index + max_match_size
             upper_index = min(upper_index + max_match_size, len(images))
-            print(upper_index)
         subset = images[lower_index:upper_index]
         x_batch = subset.reshape(
             subset.shape[0],
@@ -100,6 +96,3 @@ def predict(images, image_size):
         input_dict = {x: x_batch, y_true: y_empty}
         results = sess.run(y_pred, feed_dict=input_dict)
     return results
-
-
-#classify_image(sys.argv[1])

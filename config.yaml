@@ -4,10 +4,19 @@ image_processing:
   horizontal_divisions: 8
   number_of_translations: 2
   border_tolerance: 0.3
+  number_of_channels: 3
 
 training_parameters:
   batch_size: 32
   number_of_classes: 2
 
 image_classification:
-  number_of_translations: 4
+  number_of_translations: 8
+
+post_processing:
+  number_of_iterations: 100000
+  initial_step_size: 10
+  tolerance_bad_step: 0.1
+  tolerance: 0.3
+  step_size: 4
+  burn_in_length: 1000

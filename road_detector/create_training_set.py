@@ -12,11 +12,6 @@ import re
 import image_splitter
 import yaml
 
-
-def test():
-    print('test')
-
-
 class DataSet(object):
     def __init__(self, images, labels):
         self._num_examples = images.shape[0]
@@ -55,7 +50,7 @@ class DataSet(object):
         return self._images[start:end], self._labels[start:end]
 
 
-def process_images(image_size, file_path='../RoadDetection_Train_Images/'):
+def process_images(file_path='../RoadDetection_Train_Images/'):
     global verticalDivisor
     global horizontalDivisor
     global number_of_steps
@@ -79,7 +74,7 @@ def process_images(image_size, file_path='../RoadDetection_Train_Images/'):
     filenames = list(map((lambda x: re.sub('\.jpg$', '', x)), files))
 
     for filename in filenames:
-        print('reading image ', filename)
+        print 'reading image ' + filename
         annotated_filename = image_path + filename + ".tif"
         original_filename = image_path + filename + ".jpg"
         image = read_image(
@@ -92,7 +87,6 @@ def process_images(image_size, file_path='../RoadDetection_Train_Images/'):
             image_size,
             horizontalDivisor,
             verticalDivisor)
-        # get array of each type from subdivide
         sub_images, sub_lables, sub_roads = subdivide(
             image,
             roads,
@@ -108,46 +102,11 @@ def process_images(image_size, file_path='../RoadDetection_Train_Images/'):
     number_of_roads = 0
     for label in labels:
         number_of_roads += int(label[1])
-    print('Number of roads in training set = ', number_of_roads)
+    print 'Number of roads in training set = ' + str(number_of_roads)
     number_of_others = int(len(labels) - number_of_roads)
-    print('Number of others in training set = ', number_of_others)
+    print 'Number of others in training set = ' + str(number_of_others)
     images, labels, road_images = shuffle(images, labels, road_images)
-    # index = 0
-    # others_count = 0
-    # mask = np.full(labels.shape[0], True, dtype=bool)
-    # for index in range(labels.shape[0] - 1):
-    #     label = labels[index]
-    #     if int(label[0]) == 1 and others_count > number_of_roads:
-    #         mask[index] = False
-    #     elif(int(label[0]) == 1):
-    #         others_count += 1
-
-    # labels = labels[mask]
-    # images = images[mask]
-    # number_of_roads = 0
-    # number_of_others = 0
-    # for label in labels:
-    #     number_of_roads += int(label[1])
-    #     number_of_others += int(label[0])
-
-
-    # print('Number of images = ', labels.shape[0])
-    # print('Number of images = ', len(labels))
-    # print('Number of roads in training set = ', number_of_roads)
-    # print('Number of others in training set = ', number_of_others)
-    # for index in range(labels.shape[0] - 1):
-    #     label = labels[index]
-    #     if int(label[1]) == 1:
-    #         cv2.imwrite('roads/road_' + str(index) + '.jpg', images[index])
-    #         cv2.imwrite('roads/road_' + str(index) + '_true.jpg', road_images[index])
-    #     else:
-    #         cv2.imwrite('others/other_' + str(index) + '.jpg', images[index])
-    #         cv2.imwrite('others/other_' + str(index) + '_true.jpg', road_images[index])
-
-    # for index in range(images.shape[0]):
-    #     images[index] = create_training_set.convert_image(images[index])
-
-    # 20% of the data will automatically be used for validation
+    
     validation_size = 0.2
     validation_size = int(validation_size * images.shape[0])
     validation_images = images[:validation_size]
@@ -178,10 +137,10 @@ def subdivide(img, img_roads, horizontalDivisor, verticalDivisor):
     width = img.shape[1]
     h = (height / verticalDivisor)
     w = (width / horizontalDivisor)
-    lx = int(round(0.4 * h))
-    ux = int(round(0.6 * h))
-    ly = int(round(0.4 * w))
-    uy = int(round(0.6 * w))
+    lx = int(round(0.2 * h))
+    ux = int(round(0.8 * h))
+    ly = int(round(0.2 * w))
+    uy = int(round(0.8 * w))
     images_roads = []
     for index in range(len(sub_images) - 1):
         subimage = create_training_set.convert_image(sub_images[index])
@@ -207,8 +166,6 @@ def convert_image(image):
 
 def read_image(filename, image_size, horizontalDivisor, verticalDivisor):
     image = cv2.imread(filename)
-    # resize here such that the processing is faster, rather than down
-    # size it
     h = image_size * horizontalDivisor
     v = image_size * verticalDivisor
     image = cv2.resize(image, (h, v), 0, 0, cv2.INTER_LINEAR)
