@@ -4,3 +4,7 @@ pytest
 tensorflow
 pyyaml
 pycodestyle
+timedelta
+sklearn
+argparse
+imutils
