@@ -5,7 +5,6 @@ import cv2
 import sys
 import argparse
 import math
-import matplotlib.pyplot as plt
 import yaml
 
 
