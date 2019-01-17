@@ -17,18 +17,18 @@ The trained model is included in this repository, so if desired skip immediately
 
 To train the model run
 
-python road_detector/road_detector train <path>
+python road_detector/road_detector train PATH
 
-where <path> is the location of the training data.  This location must contain the .jpg satellite images, and .tif files.
+where PATH is the location of the training data.  This location must contain the .jpg satellite images, and .tif files.
 The .tif files are binary representations of the road network (with values between 0 and 1).
 
 #2 Testing the model
 
 To test the model run
 
-python road_detector/road_detector test <path>
+python road_detector/road_detector test PATH
 
-where <path> is the location of the test images.  This will output the resultant raw and processed predictions to the root directory.
+where PATH is the location of the test images.  This will output the resultant raw and processed predictions to the root directory.
 
 ## Advanced use
 
