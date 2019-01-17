@@ -11,7 +11,7 @@ See requirements.txt for the required Python packages.
 
 ## Instructions
 
-The trained model is included in this repository, so if desired skip immediately to step 2.
+The trained model is included in this repository, so if desired skip immediately to "Testing the model".  The training should take about half an hour to an hour on a desktop computer, and testing of the trained model should take no more than minute or two per image.
 
 ### Training the model
 
