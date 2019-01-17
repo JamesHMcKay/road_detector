@@ -3,7 +3,7 @@ import unittest
 import pycodestyle
 import numpy as np
 
-class TestCodeFormat(unittest.TestCase):
+class Test_extract_paths(unittest.TestCase):
     def test_prob_road_zeros(self):
         image = np.zeros([10,10])
         result = prob_road(image, 1, 1)

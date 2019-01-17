@@ -20,7 +20,7 @@ To train the model run
 python road_detector/road_detector train <path>
 
 where <path> is the location of the training data.  This location must contain the .jpg satellite images, and .tif files.
-The .tif files are binary representations of the road network.
+The .tif files are binary representations of the road network (with values between 0 and 1).
 
 #2 Testing the model
 
@@ -34,5 +34,8 @@ where <path> is the location of the test images.  This will output the resultant
 
 The config.yaml file located in the root directory can be modified to allow for different input types and different settings for the training and testing of the model.
 
+It is possible to perform more specific actions, such as only post-processing, or testing the trained network on a single image instead of an entire directory. See road_detector/road_detector.py for more information.
 
-It is possible to perform more specific actions, such as only post-processing, or testing the trained network on a single image instead of an entire directory.
+## Tests
+
+The test suite is currently under-development and is no where near complete.
